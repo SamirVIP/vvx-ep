@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, LogIn, Settings, Trophy, Medal, Star, Flame, Swords, Shield, Zap, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";

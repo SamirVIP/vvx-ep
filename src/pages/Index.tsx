@@ -186,7 +186,10 @@ const Index = () => {
       <section className="mx-auto max-w-7xl px-6 py-20">
         <h2 className="mb-12 text-center font-display text-4xl md:text-6xl">ROSTER</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {ratedPlayers.map((player) => (
+          {ratedPlayers.map((player) => {
+            const roleBadges = getRoleBadges(player.role);
+
+            return (
             <div key={player.id} className="group border border-border bg-card/40 transition-all hover:border-highlight">
               {player.image_url ? (
                 <img
@@ -199,11 +202,26 @@ const Index = () => {
               )}
               <div className="border-t border-border p-4">
                 <h3 className="mb-1 font-display text-2xl">{player.codename}</h3>
-                {player.role && <p className="text-xs text-muted-foreground">{player.role}</p>}
+                {roleBadges.length > 0 ? (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {roleBadges.map((badge) => (
+                      <span
+                        key={`${player.id}-${badge.key}`}
+                        className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-2 py-1 text-[11px] text-secondary-foreground"
+                      >
+                        {badge.icon}
+                        {badge.label}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  player.role && <p className="text-xs text-muted-foreground">{player.role}</p>
+                )}
                 <p className="mt-3 text-sm text-highlight">Rating: {player.rating.toFixed(2)} / 10.00</p>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

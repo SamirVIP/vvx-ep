@@ -293,6 +293,7 @@ const Index = () => {
                       Rating: {player.rating.toFixed(2)} / 10.00
                     </p>
                   </div>
+                  <p className="mt-2 text-xs text-muted-foreground">Updated: {formatUpdatedDate(player.updated_at)}</p>
                 </div>
               </div>
             );

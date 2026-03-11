@@ -249,7 +249,7 @@ const Index = () => {
                       {roleBadges.map((badge) => (
                         <span
                           key={`${player.id}-${badge.key}`}
-                          className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-2 py-1 text-[11px] text-secondary-foreground"
+                          className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${badge.className}`}
                         >
                           {badge.icon}
                           {badge.label}

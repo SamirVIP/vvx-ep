@@ -66,8 +66,8 @@ const Admin = () => {
 
   const loadPlayers = async () => {
     const { data } = await supabase.from("player_stats").select("*").order("codename");
-    setPlayers(data || []);
-    if (data && data.length > 0) setSelectedPlayer(data[0]);
+    setPlayers((data || []) as Player[]);
+    if (data && data.length > 0) setSelectedPlayer(data[0] as Player);
   };
 
   const saveContent = async () => {

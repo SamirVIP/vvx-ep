@@ -65,7 +65,7 @@ const Index = () => {
         .select("*")
         .order("codename");
       if (error) throw error;
-      setPlayers(data || []);
+      setPlayers((data || []) as Player[]);
     } catch (error) {
       console.error("Error loading players:", error);
     } finally {

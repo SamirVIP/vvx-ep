@@ -59,6 +59,10 @@ const getPlayerRatingValue = (stats: Record<string, number>) => {
   return Math.min(10, Math.max(1, Number(parsed.toFixed(2))));
 };
 
+const clampRating = (value: number) => Math.min(10, Math.max(1, Number(value.toFixed(2))));
+
+const normalizeRatingInput = (value: string) => value.replace(",", ".").trim();
+
 const formatUpdatedDate = (updatedAt: string) => {
   const date = new Date(updatedAt);
   if (Number.isNaN(date.getTime())) return "-";
@@ -80,6 +84,7 @@ const Admin = () => {
   });
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [ratingInput, setRatingInput] = useState("1.00");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -95,6 +100,11 @@ const Admin = () => {
       loadPlayers();
     }
   }, [isAdmin]);
+
+  useEffect(() => {
+    if (!selectedPlayer) return;
+    setRatingInput(getPlayerRatingValue(selectedPlayer.stats).toFixed(2));
+  }, [selectedPlayer?.id]);
 
   const loadContent = async () => {
     const { data } = await supabase.from("site_content").select("key, content");
@@ -142,11 +152,14 @@ const Admin = () => {
 
   const savePlayer = async () => {
     if (!selectedPlayer) return;
-    const rating = getPlayerRatingValue(selectedPlayer.stats);
-    if (rating < 1 || rating > 10) {
-      toast.error("Rating must be between 1.00 and 10.00");
+
+    const parsedInput = Number(normalizeRatingInput(ratingInput));
+    if (Number.isNaN(parsedInput)) {
+      toast.error("Rating must be a valid number between 1.00 and 10.00");
       return;
     }
+
+    const rating = clampRating(parsedInput);
 
     setSaving(true);
     try {
@@ -154,7 +167,7 @@ const Admin = () => {
         ...selectedPlayer,
         stats: {
           ...selectedPlayer.stats,
-          rating: Number(rating.toFixed(2)),
+          rating,
         },
       };
 
@@ -387,14 +400,34 @@ const Admin = () => {
                     max={10}
                     step={0.01}
                     required
-                    value={getPlayerRatingValue(selectedPlayer.stats)}
+                    value={ratingInput}
                     onChange={(e) => {
-                      const next = Number(e.target.value);
+                      const rawValue = e.target.value;
+                      setRatingInput(rawValue);
+                      const parsed = Number(normalizeRatingInput(rawValue));
+                      if (!Number.isNaN(parsed)) {
+                        setSelectedPlayer({
+                          ...selectedPlayer,
+                          stats: {
+                            ...selectedPlayer.stats,
+                            rating: parsed,
+                          },
+                        });
+                      }
+                    }}
+                    onBlur={() => {
+                      const parsed = Number(normalizeRatingInput(ratingInput));
+                      if (Number.isNaN(parsed)) {
+                        setRatingInput(getPlayerRatingValue(selectedPlayer.stats).toFixed(2));
+                        return;
+                      }
+                      const clamped = clampRating(parsed);
+                      setRatingInput(clamped.toFixed(2));
                       setSelectedPlayer({
                         ...selectedPlayer,
                         stats: {
                           ...selectedPlayer.stats,
-                          rating: Number.isNaN(next) ? 1 : next,
+                          rating: clamped,
                         },
                       });
                     }}

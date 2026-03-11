@@ -307,10 +307,24 @@ const Admin = () => {
                 </div>
                 <div>
                   <Label>Role</Label>
-                  <Input
-                    value={selectedPlayer.role || ""}
-                    onChange={(e) => setSelectedPlayer({ ...selectedPlayer, role: e.target.value })}
-                  />
+                  <Select
+                    value={selectedPlayer.role || "__none__"}
+                    onValueChange={(value) =>
+                      setSelectedPlayer({ ...selectedPlayer, role: value === "__none__" ? "" : value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">None</SelectItem>
+                      {roleOptions.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {role}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label>Country</Label>

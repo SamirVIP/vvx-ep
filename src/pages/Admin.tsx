@@ -152,11 +152,14 @@ const Admin = () => {
 
   const savePlayer = async () => {
     if (!selectedPlayer) return;
-    const rating = getPlayerRatingValue(selectedPlayer.stats);
-    if (rating < 1 || rating > 10) {
-      toast.error("Rating must be between 1.00 and 10.00");
+
+    const parsedInput = Number(normalizeRatingInput(ratingInput));
+    if (Number.isNaN(parsedInput)) {
+      toast.error("Rating must be a valid number between 1.00 and 10.00");
       return;
     }
+
+    const rating = clampRating(parsedInput);
 
     setSaving(true);
     try {
@@ -164,7 +167,7 @@ const Admin = () => {
         ...selectedPlayer,
         stats: {
           ...selectedPlayer.stats,
-          rating: Number(rating.toFixed(2)),
+          rating,
         },
       };
 

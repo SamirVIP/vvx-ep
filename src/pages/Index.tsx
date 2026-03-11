@@ -43,7 +43,7 @@ const getPlayerRating = (player: Player) => {
 
 const getRoleBadges = (role: string | null) => {
   const value = (role ?? "").toLowerCase();
-  const badges: Array<{ key: string; label: string; icon: JSX.Element }> = [];
+  const badges: Array<{ key: string; label: string; icon: ReactNode }> = [];
 
   if (value.includes("rusher") || value.includes("entry")) {
     badges.push({ key: "rusher", label: "Rusher", icon: <Flame className="h-3.5 w-3.5" /> });

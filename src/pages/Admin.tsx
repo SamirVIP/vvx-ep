@@ -400,14 +400,34 @@ const Admin = () => {
                     max={10}
                     step={0.01}
                     required
-                    value={getPlayerRatingValue(selectedPlayer.stats)}
+                    value={ratingInput}
                     onChange={(e) => {
-                      const next = Number(e.target.value);
+                      const rawValue = e.target.value;
+                      setRatingInput(rawValue);
+                      const parsed = Number(normalizeRatingInput(rawValue));
+                      if (!Number.isNaN(parsed)) {
+                        setSelectedPlayer({
+                          ...selectedPlayer,
+                          stats: {
+                            ...selectedPlayer.stats,
+                            rating: parsed,
+                          },
+                        });
+                      }
+                    }}
+                    onBlur={() => {
+                      const parsed = Number(normalizeRatingInput(ratingInput));
+                      if (Number.isNaN(parsed)) {
+                        setRatingInput(getPlayerRatingValue(selectedPlayer.stats).toFixed(2));
+                        return;
+                      }
+                      const clamped = clampRating(parsed);
+                      setRatingInput(clamped.toFixed(2));
                       setSelectedPlayer({
                         ...selectedPlayer,
                         stats: {
                           ...selectedPlayer.stats,
-                          rating: Number.isNaN(next) ? 1 : next,
+                          rating: clamped,
                         },
                       });
                     }}

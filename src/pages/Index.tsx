@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, LogIn, Settings, Trophy, Medal, Star } from "lucide-react";
+import { LogOut, LogIn, Settings, Trophy, Medal, Star, Flame, Swords, Shield, Zap, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";

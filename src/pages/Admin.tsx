@@ -101,6 +101,11 @@ const Admin = () => {
     }
   }, [isAdmin]);
 
+  useEffect(() => {
+    if (!selectedPlayer) return;
+    setRatingInput(getPlayerRatingValue(selectedPlayer.stats).toFixed(2));
+  }, [selectedPlayer?.id]);
+
   const loadContent = async () => {
     const { data } = await supabase.from("site_content").select("key, content");
     if (data) {

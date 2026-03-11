@@ -158,6 +158,13 @@ const Admin = () => {
     setAwardValue(field, "");
   };
 
+  const addNewPlayer = () => {
+    const newPlayer = createNewPlayer();
+    setPlayers((prev) => [...prev, newPlayer]);
+    setSelectedPlayer(newPlayer);
+    setRatingInput("1.00");
+  };
+
   const saveContent = async () => {
     setSaving(true);
     try {

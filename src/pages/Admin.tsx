@@ -42,6 +42,17 @@ interface Player {
   trends: Record<string, number[]>;
 }
 
+const roleOptions = ["Rusher", "Assaulter", "Supporter", "Boomber", "IGL/Leader", "Entry Fragger"];
+
+const awardFields = [
+  { key: "player_of_match", label: "Player of the Match" },
+  { key: "player_of_month", label: "Player of the Month" },
+  { key: "player_of_season", label: "Player of the Season" },
+  { key: "player_of_tournament", label: "Player of the Tournament" },
+] as const;
+
+type AwardFieldKey = (typeof awardFields)[number]["key"];
+
 const Admin = () => {
   const { isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();

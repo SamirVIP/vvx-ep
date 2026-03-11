@@ -31,19 +31,20 @@ interface Player {
   bio: string | null;
   image_url: string | null;
   stats: Record<string, number>;
+  updated_at: string;
 }
 
-const getPlayerRating = (player: Player) => {
-  const safeStats: PlayerStats = {
-    kd: Number(player.stats?.kd ?? 0),
-    apm: Number(player.stats?.apm ?? 0),
-    winRate: Number(player.stats?.winRate ?? 0),
-    headshot: Number(player.stats?.headshot ?? 0),
-    clutch: Number(player.stats?.clutch ?? 0),
-    mvp: Number(player.stats?.mvp ?? 0),
-  };
+const clampRating = (value: number) => {
+  if (Number.isNaN(value)) return 1;
+  return Math.min(10, Math.max(1, Number(value.toFixed(2))));
+};
 
-  return calculateRating10(safeStats);
+const getPlayerRating = (player: Player) => clampRating(Number(player.stats?.rating ?? 1));
+
+const formatUpdatedDate = (updatedAt: string) => {
+  const date = new Date(updatedAt);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toISOString().slice(0, 10);
 };
 
 const getRatingToneClass = (rating: number) => {

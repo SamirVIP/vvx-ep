@@ -41,6 +41,29 @@ const getPlayerRating = (player: Player) => {
   return calculateRating10(safeStats);
 };
 
+const getRoleBadges = (role: string | null) => {
+  const value = (role ?? "").toLowerCase();
+  const badges: Array<{ key: string; label: string; icon: JSX.Element }> = [];
+
+  if (value.includes("rusher") || value.includes("entry")) {
+    badges.push({ key: "rusher", label: "Rusher", icon: <Flame className="h-3.5 w-3.5" /> });
+  }
+  if (value.includes("assaulter") || value.includes("assault")) {
+    badges.push({ key: "assaulter", label: "Assaulter", icon: <Swords className="h-3.5 w-3.5" /> });
+  }
+  if (value.includes("support") || value.includes("supporter")) {
+    badges.push({ key: "supporter", label: "Supporter", icon: <Shield className="h-3.5 w-3.5" /> });
+  }
+  if (value.includes("boomber") || value.includes("bomber")) {
+    badges.push({ key: "boomber", label: "Boomber", icon: <Zap className="h-3.5 w-3.5" /> });
+  }
+  if (value.includes("igl") || value.includes("leader")) {
+    badges.push({ key: "leader", label: "IGL / Leader", icon: <Crown className="h-3.5 w-3.5" /> });
+  }
+
+  return badges;
+};
+
 const Index = () => {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();

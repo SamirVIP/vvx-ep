@@ -360,7 +360,10 @@ const Admin = () => {
 
         <section className="border border-border bg-card/40 p-6">
           <h2 className="mb-6 font-display text-2xl">Player Editor</h2>
-          <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
+          <div className="mb-6 flex flex-wrap items-center gap-2 overflow-x-auto pb-2">
+            <Button type="button" variant="outline" onClick={addNewPlayer}>
+              Add Player/Member
+            </Button>
             {players.map((player) => (
               <Button key={player.id} variant={selectedPlayer?.id === player.id ? "hero" : "cathedral"} onClick={() => setSelectedPlayer(player)}>
                 {player.codename}

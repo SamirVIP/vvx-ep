@@ -53,6 +53,18 @@ const awardFields = [
 
 type AwardFieldKey = (typeof awardFields)[number]["key"];
 
+const getPlayerRatingValue = (stats: Record<string, number>) => {
+  const parsed = Number(stats?.rating ?? 1);
+  if (Number.isNaN(parsed)) return 1;
+  return Math.min(10, Math.max(1, Number(parsed.toFixed(2))));
+};
+
+const formatUpdatedDate = (updatedAt: string) => {
+  const date = new Date(updatedAt);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toISOString().slice(0, 10);
+};
+
 const Admin = () => {
   const { isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();

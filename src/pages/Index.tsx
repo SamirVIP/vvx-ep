@@ -117,6 +117,17 @@ const getRoleBadges = (role: string | null) => {
   return badges;
 };
 
+const getRolePriority = (role: string | null) => {
+  const value = (role ?? "").toLowerCase();
+
+  if (value.includes("igl") || value.includes("leader")) return 0;
+  if (value.includes("rusher") || value.includes("entry")) return 1;
+  if (value.includes("assaulter") || value.includes("assault")) return 2;
+  if (value.includes("support") || value.includes("supporter")) return 3;
+  if (value.includes("boomber") || value.includes("bomber")) return 4;
+  return 5;
+};
+
 const Index = () => {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
@@ -134,14 +145,33 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadContent();
-    loadPlayers();
+    let isActive = true;
+
+    const initializePage = async () => {
+      setLoading(true);
+      await Promise.all([loadContent(isActive), loadPlayers(isActive)]);
+      if (isActive) setLoading(false);
+    };
+
+    void initializePage();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const ratedPlayers = useMemo(
     () => players.map((player) => ({ ...player, rating: getPlayerRating(player) })),
     [players],
   );
+
+  const sortedPlayers = useMemo(() => {
+    return [...ratedPlayers].sort((a, b) => {
+      const priorityDiff = getRolePriority(a.role) - getRolePriority(b.role);
+      if (priorityDiff !== 0) return priorityDiff;
+      return a.codename.localeCompare(b.codename);
+    });
+  }, [ratedPlayers]);
 
   const findPlayerByManualValue = (manualValue: string) => {
     const normalized = manualValue.trim().toLowerCase();
@@ -168,11 +198,11 @@ const Index = () => {
     };
   }, [ratedPlayers, content]);
 
-  const loadContent = async () => {
+  const loadContent = async (isActive = true) => {
     try {
       const { data, error } = await supabase.from("site_content").select("key, content");
       if (error) throw error;
-      if (data) {
+      if (data && isActive) {
         const contentMap = data.reduce(
           (acc, item) => ({ ...acc, [item.key]: item.content }),
           {} as SiteContent,
@@ -184,18 +214,18 @@ const Index = () => {
     }
   };
 
-  const loadPlayers = async () => {
+  const loadPlayers = async (isActive = true) => {
     try {
       const { data, error } = await supabase
         .from("player_stats")
         .select("*")
         .order("codename");
       if (error) throw error;
-      setPlayers((data || []) as Player[]);
+      if (isActive) {
+        setPlayers((data || []) as Player[]);
+      }
     } catch (error) {
       console.error("Error loading players:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -251,8 +281,9 @@ const Index = () => {
       <section className="mx-auto max-w-7xl px-6 py-20">
         <h2 className="mb-12 text-center font-display text-4xl md:text-6xl">ROSTER</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {ratedPlayers.map((player) => {
+          {sortedPlayers.map((player) => {
             const roleBadges = getRoleBadges(player.role);
+            const ratingDirection = getRatingDirection(player.rating);
 
             return (
               <div key={player.id} className="group border border-border bg-card/40 transition-all hover:border-highlight">
@@ -284,10 +315,10 @@ const Index = () => {
                   )}
                   <div className="mt-3 flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${getRatingDirection(player.rating).badgeClass}`}
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${ratingDirection.badgeClass}`}
                     >
-                      {getRatingDirection(player.rating).icon}
-                      {getRatingDirection(player.rating).label}
+                      {ratingDirection.icon}
+                      {ratingDirection.label}
                     </span>
                     <p className={`text-sm ${getRatingToneClass(player.rating)}`}>
                       Rating: {player.rating.toFixed(2)} / 10.00

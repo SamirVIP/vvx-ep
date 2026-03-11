@@ -84,6 +84,7 @@ const Admin = () => {
   });
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [ratingInput, setRatingInput] = useState("1.00");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 

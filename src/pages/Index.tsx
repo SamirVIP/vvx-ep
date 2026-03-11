@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, LogIn, Settings, Trophy, Medal, Star, Flame, Swords, Shield, Zap, Crown } from "lucide-react";
+import { LogOut, LogIn, Settings, Trophy, Medal, Star, Flame, Swords, Shield, Zap, Crown, TrendingUp, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
@@ -44,6 +44,28 @@ const getPlayerRating = (player: Player) => {
   };
 
   return calculateRating10(safeStats);
+};
+
+const getRatingToneClass = (rating: number) => {
+  if (rating < 3) return "text-destructive";
+  if (rating < 7) return "text-highlight";
+  return "text-primary";
+};
+
+const getRatingDirection = (rating: number) => {
+  if (rating >= 7) {
+    return {
+      label: "Up",
+      icon: <TrendingUp className="h-3.5 w-3.5" />,
+      badgeClass: "border-primary/40 bg-primary/15 text-primary",
+    };
+  }
+
+  return {
+    label: "Down",
+    icon: <TrendingDown className="h-3.5 w-3.5" />,
+    badgeClass: "border-destructive/40 bg-destructive/10 text-destructive",
+  };
 };
 
 const getRoleBadges = (role: string | null) => {
@@ -259,7 +281,17 @@ const Index = () => {
                   ) : (
                     player.role && <p className="text-xs text-muted-foreground">{player.role}</p>
                   )}
-                  <p className="mt-3 text-sm text-highlight">Rating: {player.rating.toFixed(2)} / 10.00</p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${getRatingDirection(player.rating).badgeClass}`}
+                    >
+                      {getRatingDirection(player.rating).icon}
+                      {getRatingDirection(player.rating).label}
+                    </span>
+                    <p className={`text-sm ${getRatingToneClass(player.rating)}`}>
+                      Rating: {player.rating.toFixed(2)} / 10.00
+                    </p>
+                  </div>
                 </div>
               </div>
             );
@@ -277,7 +309,21 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <p className="font-display text-2xl">{playerAwards.playerOfMatch?.codename ?? "Not selected"}</p>
-                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfMatch ? `${playerAwards.playerOfMatch.rating.toFixed(2)} / 10.00` : "-"}</p>
+                {playerAwards.playerOfMatch ? (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${getRatingDirection(playerAwards.playerOfMatch.rating).badgeClass}`}
+                    >
+                      {getRatingDirection(playerAwards.playerOfMatch.rating).icon}
+                      {getRatingDirection(playerAwards.playerOfMatch.rating).label}
+                    </span>
+                    <p className={`text-sm ${getRatingToneClass(playerAwards.playerOfMatch.rating)}`}>
+                      Rating: {playerAwards.playerOfMatch.rating.toFixed(2)} / 10.00
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Rating: -</p>
+                )}
               </CardContent>
             </Card>
             <Card className="bg-card/40">
@@ -286,7 +332,21 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <p className="font-display text-2xl">{playerAwards.playerOfMonth?.codename ?? "Not selected"}</p>
-                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfMonth ? `${playerAwards.playerOfMonth.rating.toFixed(2)} / 10.00` : "-"}</p>
+                {playerAwards.playerOfMonth ? (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${getRatingDirection(playerAwards.playerOfMonth.rating).badgeClass}`}
+                    >
+                      {getRatingDirection(playerAwards.playerOfMonth.rating).icon}
+                      {getRatingDirection(playerAwards.playerOfMonth.rating).label}
+                    </span>
+                    <p className={`text-sm ${getRatingToneClass(playerAwards.playerOfMonth.rating)}`}>
+                      Rating: {playerAwards.playerOfMonth.rating.toFixed(2)} / 10.00
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Rating: -</p>
+                )}
               </CardContent>
             </Card>
             <Card className="bg-card/40">
@@ -295,7 +355,21 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <p className="font-display text-2xl">{playerAwards.playerOfSeason?.codename ?? "Not selected"}</p>
-                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfSeason ? `${playerAwards.playerOfSeason.rating.toFixed(2)} / 10.00` : "-"}</p>
+                {playerAwards.playerOfSeason ? (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${getRatingDirection(playerAwards.playerOfSeason.rating).badgeClass}`}
+                    >
+                      {getRatingDirection(playerAwards.playerOfSeason.rating).icon}
+                      {getRatingDirection(playerAwards.playerOfSeason.rating).label}
+                    </span>
+                    <p className={`text-sm ${getRatingToneClass(playerAwards.playerOfSeason.rating)}`}>
+                      Rating: {playerAwards.playerOfSeason.rating.toFixed(2)} / 10.00
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Rating: -</p>
+                )}
               </CardContent>
             </Card>
             <Card className="bg-card/40">
@@ -305,7 +379,21 @@ const Index = () => {
               <CardContent>
                 <p className="font-display text-2xl">{playerAwards.playerOfTournament?.codename ?? "Not selected"}</p>
                 <p className="text-sm text-muted-foreground">Date: {playerAwards.tournamentDate || "Not set"}</p>
-                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfTournament ? `${playerAwards.playerOfTournament.rating.toFixed(2)} / 10.00` : "-"}</p>
+                {playerAwards.playerOfTournament ? (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${getRatingDirection(playerAwards.playerOfTournament.rating).badgeClass}`}
+                    >
+                      {getRatingDirection(playerAwards.playerOfTournament.rating).icon}
+                      {getRatingDirection(playerAwards.playerOfTournament.rating).label}
+                    </span>
+                    <p className={`text-sm ${getRatingToneClass(playerAwards.playerOfTournament.rating)}`}>
+                      Rating: {playerAwards.playerOfTournament.rating.toFixed(2)} / 10.00
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Rating: -</p>
+                )}
               </CardContent>
             </Card>
           </div>

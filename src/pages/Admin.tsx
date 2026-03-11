@@ -15,7 +15,6 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { statConfig } from "@/data/esports";
 
 interface SiteContent {
   hero_title: string;
@@ -40,6 +39,7 @@ interface Player {
   image_url: string | null;
   stats: Record<string, number>;
   trends: Record<string, number[]>;
+  updated_at: string;
 }
 
 const roleOptions = ["Rusher", "Assaulter", "Supporter", "Boomber", "IGL/Leader", "Entry Fragger"];
@@ -52,6 +52,18 @@ const awardFields = [
 ] as const;
 
 type AwardFieldKey = (typeof awardFields)[number]["key"];
+
+const getPlayerRatingValue = (stats: Record<string, number>) => {
+  const parsed = Number(stats?.rating ?? 1);
+  if (Number.isNaN(parsed)) return 1;
+  return Math.min(10, Math.max(1, Number(parsed.toFixed(2))));
+};
+
+const formatUpdatedDate = (updatedAt: string) => {
+  const date = new Date(updatedAt);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toISOString().slice(0, 10);
+};
 
 const Admin = () => {
   const { isAdmin, loading: authLoading } = useAuth();
@@ -130,11 +142,25 @@ const Admin = () => {
 
   const savePlayer = async () => {
     if (!selectedPlayer) return;
+    const rating = getPlayerRatingValue(selectedPlayer.stats);
+    if (rating < 1 || rating > 10) {
+      toast.error("Rating must be between 1.00 and 10.00");
+      return;
+    }
+
     setSaving(true);
     try {
+      const playerToSave = {
+        ...selectedPlayer,
+        stats: {
+          ...selectedPlayer.stats,
+          rating: Number(rating.toFixed(2)),
+        },
+      };
+
       const { error } = await supabase
         .from("player_stats")
-        .upsert(selectedPlayer, { onConflict: "player_id" });
+        .upsert(playerToSave, { onConflict: "player_id" });
       if (error) throw error;
       toast.success("Player saved");
       loadPlayers();
@@ -351,32 +377,33 @@ const Admin = () => {
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-display text-xl">Stats</h3>
-                {statConfig.map((stat) => (
-                  <div key={stat.key}>
-                    <Label>{stat.label}</Label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="range"
-                        min={0}
-                        max={stat.max}
-                        step={stat.step}
-                        value={selectedPlayer.stats[stat.key] || 0}
-                        onChange={(e) =>
-                          setSelectedPlayer({
-                            ...selectedPlayer,
-                            stats: { ...selectedPlayer.stats, [stat.key]: Number(e.target.value) },
-                          })
-                        }
-                        className="h-2 flex-1 cursor-pointer accent-highlight"
-                      />
-                      <span className="w-16 text-sm">
-                        {selectedPlayer.stats[stat.key] || 0}
-                        {stat.unit}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                <h3 className="font-display text-xl">Rating</h3>
+                <div>
+                  <Label htmlFor="player-rating">Direct Rating (1.00 - 10.00)</Label>
+                  <Input
+                    id="player-rating"
+                    type="number"
+                    min={1}
+                    max={10}
+                    step={0.01}
+                    required
+                    value={getPlayerRatingValue(selectedPlayer.stats)}
+                    onChange={(e) => {
+                      const next = Number(e.target.value);
+                      setSelectedPlayer({
+                        ...selectedPlayer,
+                        stats: {
+                          ...selectedPlayer.stats,
+                          rating: Number.isNaN(next) ? 1 : next,
+                        },
+                      });
+                    }}
+                  />
+                  <p className="mt-2 text-xs text-muted-foreground">Required range: 1.00 to 10.00</p>
+                </div>
+                <div className="rounded border border-border bg-background/40 p-3 text-sm text-muted-foreground">
+                  Last updated date: {formatUpdatedDate(selectedPlayer.updated_at)}
+                </div>
               </div>
             </div>
           )}

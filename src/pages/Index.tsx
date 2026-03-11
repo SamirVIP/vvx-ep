@@ -281,7 +281,17 @@ const Index = () => {
                   ) : (
                     player.role && <p className="text-xs text-muted-foreground">{player.role}</p>
                   )}
-                  <p className="mt-3 text-sm text-highlight">Rating: {player.rating.toFixed(2)} / 10.00</p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${getRatingDirection(player.rating).badgeClass}`}
+                    >
+                      {getRatingDirection(player.rating).icon}
+                      {getRatingDirection(player.rating).label}
+                    </span>
+                    <p className={`text-sm ${getRatingToneClass(player.rating)}`}>
+                      Rating: {player.rating.toFixed(2)} / 10.00
+                    </p>
+                  </div>
                 </div>
               </div>
             );

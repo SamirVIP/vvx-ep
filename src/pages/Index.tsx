@@ -13,6 +13,11 @@ interface SiteContent {
   hero_title: string;
   hero_tagline: string;
   team_description: string;
+  player_of_match: string;
+  player_of_month: string;
+  player_of_season: string;
+  player_of_tournament: string;
+  tournament_date: string;
 }
 
 interface Player {
@@ -71,6 +76,11 @@ const Index = () => {
     hero_title: "VELOCITY VORTEX X",
     hero_tagline: "Precision. Speed. Dominance.",
     team_description: "Elite esports performance powered by data and discipline.",
+    player_of_match: "",
+    player_of_month: "",
+    player_of_season: "",
+    player_of_tournament: "",
+    tournament_date: "",
   });
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,23 +95,30 @@ const Index = () => {
     [players],
   );
 
+  const findPlayerByManualValue = (manualValue: string) => {
+    const normalized = manualValue.trim().toLowerCase();
+    if (!normalized) return null;
+    return (
+      ratedPlayers.find(
+        (player) =>
+          player.codename.toLowerCase() === normalized ||
+          player.player_id.toLowerCase() === normalized ||
+          (player.real_name ?? "").toLowerCase() === normalized,
+      ) ?? null
+    );
+  };
+
   const playerAwards = useMemo(() => {
     if (ratedPlayers.length === 0) return null;
 
-    const byRating = [...ratedPlayers].sort((a, b) => b.rating - a.rating);
-    const playerOfSeason = byRating[0];
-    const playerOfMatch = [...ratedPlayers].sort((a, b) => (b.stats?.mvp ?? 0) - (a.stats?.mvp ?? 0))[0];
-    const playerOfMonth = [...ratedPlayers].sort((a, b) => (b.stats?.winRate ?? 0) - (a.stats?.winRate ?? 0))[0];
-    const playerOfTournament = [...ratedPlayers].sort((a, b) => (b.stats?.clutch ?? 0) - (a.stats?.clutch ?? 0))[0];
-
     return {
-      playerOfMatch,
-      playerOfMonth,
-      playerOfSeason,
-      playerOfTournament,
-      tournamentDate: new Date().toLocaleDateString(),
+      playerOfMatch: findPlayerByManualValue(content.player_of_match),
+      playerOfMonth: findPlayerByManualValue(content.player_of_month),
+      playerOfSeason: findPlayerByManualValue(content.player_of_season),
+      playerOfTournament: findPlayerByManualValue(content.player_of_tournament),
+      tournamentDate: content.tournament_date,
     };
-  }, [ratedPlayers]);
+  }, [ratedPlayers, content]);
 
   const loadContent = async () => {
     try {
@@ -190,36 +207,36 @@ const Index = () => {
             const roleBadges = getRoleBadges(player.role);
 
             return (
-            <div key={player.id} className="group border border-border bg-card/40 transition-all hover:border-highlight">
-              {player.image_url ? (
-                <img
-                  src={player.image_url}
-                  alt={player.codename}
-                  className="aspect-square w-full object-cover"
-                />
-              ) : (
-                <div className="aspect-square w-full bg-muted" />
-              )}
-              <div className="border-t border-border p-4">
-                <h3 className="mb-1 font-display text-2xl">{player.codename}</h3>
-                {roleBadges.length > 0 ? (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {roleBadges.map((badge) => (
-                      <span
-                        key={`${player.id}-${badge.key}`}
-                        className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-2 py-1 text-[11px] text-secondary-foreground"
-                      >
-                        {badge.icon}
-                        {badge.label}
-                      </span>
-                    ))}
-                  </div>
+              <div key={player.id} className="group border border-border bg-card/40 transition-all hover:border-highlight">
+                {player.image_url ? (
+                  <img
+                    src={player.image_url}
+                    alt={player.codename}
+                    className="aspect-square w-full object-cover"
+                  />
                 ) : (
-                  player.role && <p className="text-xs text-muted-foreground">{player.role}</p>
+                  <div className="aspect-square w-full bg-muted" />
                 )}
-                <p className="mt-3 text-sm text-highlight">Rating: {player.rating.toFixed(2)} / 10.00</p>
+                <div className="border-t border-border p-4">
+                  <h3 className="mb-1 font-display text-2xl">{player.codename}</h3>
+                  {roleBadges.length > 0 ? (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {roleBadges.map((badge) => (
+                        <span
+                          key={`${player.id}-${badge.key}`}
+                          className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-2 py-1 text-[11px] text-secondary-foreground"
+                        >
+                          {badge.icon}
+                          {badge.label}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    player.role && <p className="text-xs text-muted-foreground">{player.role}</p>
+                  )}
+                  <p className="mt-3 text-sm text-highlight">Rating: {player.rating.toFixed(2)} / 10.00</p>
+                </div>
               </div>
-            </div>
             );
           })}
         </div>
@@ -234,8 +251,8 @@ const Index = () => {
                 <CardTitle className="flex items-center gap-2 text-lg"><Trophy className="h-5 w-5" /> Player of the Match</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="font-display text-2xl">{playerAwards.playerOfMatch.codename}</p>
-                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfMatch.rating.toFixed(2)} / 10.00</p>
+                <p className="font-display text-2xl">{playerAwards.playerOfMatch?.codename ?? "Not selected"}</p>
+                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfMatch ? `${playerAwards.playerOfMatch.rating.toFixed(2)} / 10.00` : "-"}</p>
               </CardContent>
             </Card>
             <Card className="bg-card/40">
@@ -243,8 +260,8 @@ const Index = () => {
                 <CardTitle className="flex items-center gap-2 text-lg"><Star className="h-5 w-5" /> Player of the Month</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="font-display text-2xl">{playerAwards.playerOfMonth.codename}</p>
-                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfMonth.rating.toFixed(2)} / 10.00</p>
+                <p className="font-display text-2xl">{playerAwards.playerOfMonth?.codename ?? "Not selected"}</p>
+                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfMonth ? `${playerAwards.playerOfMonth.rating.toFixed(2)} / 10.00` : "-"}</p>
               </CardContent>
             </Card>
             <Card className="bg-card/40">
@@ -252,8 +269,8 @@ const Index = () => {
                 <CardTitle className="flex items-center gap-2 text-lg"><Medal className="h-5 w-5" /> Player of the Season</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="font-display text-2xl">{playerAwards.playerOfSeason.codename}</p>
-                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfSeason.rating.toFixed(2)} / 10.00</p>
+                <p className="font-display text-2xl">{playerAwards.playerOfSeason?.codename ?? "Not selected"}</p>
+                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfSeason ? `${playerAwards.playerOfSeason.rating.toFixed(2)} / 10.00` : "-"}</p>
               </CardContent>
             </Card>
             <Card className="bg-card/40">
@@ -261,9 +278,9 @@ const Index = () => {
                 <CardTitle className="flex items-center gap-2 text-lg"><Trophy className="h-5 w-5" /> Player of the Tournament</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="font-display text-2xl">{playerAwards.playerOfTournament.codename}</p>
-                <p className="text-sm text-muted-foreground">Date: {playerAwards.tournamentDate}</p>
-                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfTournament.rating.toFixed(2)} / 10.00</p>
+                <p className="font-display text-2xl">{playerAwards.playerOfTournament?.codename ?? "Not selected"}</p>
+                <p className="text-sm text-muted-foreground">Date: {playerAwards.tournamentDate || "Not set"}</p>
+                <p className="text-sm text-highlight">Rating: {playerAwards.playerOfTournament ? `${playerAwards.playerOfTournament.rating.toFixed(2)} / 10.00` : "-"}</p>
               </CardContent>
             </Card>
           </div>
@@ -274,4 +291,3 @@ const Index = () => {
 };
 
 export default Index;
-

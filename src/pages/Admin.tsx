@@ -14,6 +14,11 @@ interface SiteContent {
   hero_title: string;
   hero_tagline: string;
   team_description: string;
+  player_of_match: string;
+  player_of_month: string;
+  player_of_season: string;
+  player_of_tournament: string;
+  tournament_date: string;
 }
 
 interface Player {
@@ -37,6 +42,11 @@ const Admin = () => {
     hero_title: "",
     hero_tagline: "",
     team_description: "",
+    player_of_match: "",
+    player_of_month: "",
+    player_of_season: "",
+    player_of_tournament: "",
+    tournament_date: "",
   });
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -140,7 +150,6 @@ const Admin = () => {
           <h1 className="font-display text-4xl">ADMIN PANEL</h1>
         </div>
 
-        {/* Site Content */}
         <section className="mb-12 border border-border bg-card/40 p-6">
           <h2 className="mb-6 font-display text-2xl">Site Content</h2>
           <div className="space-y-4">
@@ -165,13 +174,64 @@ const Admin = () => {
                 onChange={(e) => setContent({ ...content, team_description: e.target.value })}
               />
             </div>
+
+            <datalist id="player-options">
+              {players.map((player) => (
+                <option key={player.id} value={player.codename} />
+              ))}
+            </datalist>
+
+            <div>
+              <Label>Player of the Match (Leader choice)</Label>
+              <Input
+                list="player-options"
+                value={content.player_of_match}
+                onChange={(e) => setContent({ ...content, player_of_match: e.target.value })}
+                placeholder="Enter player codename"
+              />
+            </div>
+            <div>
+              <Label>Player of the Month (Leader choice)</Label>
+              <Input
+                list="player-options"
+                value={content.player_of_month}
+                onChange={(e) => setContent({ ...content, player_of_month: e.target.value })}
+                placeholder="Enter player codename"
+              />
+            </div>
+            <div>
+              <Label>Player of the Season (Leader choice)</Label>
+              <Input
+                list="player-options"
+                value={content.player_of_season}
+                onChange={(e) => setContent({ ...content, player_of_season: e.target.value })}
+                placeholder="Enter player codename"
+              />
+            </div>
+            <div>
+              <Label>Player of the Tournament (Leader choice)</Label>
+              <Input
+                list="player-options"
+                value={content.player_of_tournament}
+                onChange={(e) => setContent({ ...content, player_of_tournament: e.target.value })}
+                placeholder="Enter player codename"
+              />
+            </div>
+            <div>
+              <Label>Tournament Date</Label>
+              <Input
+                type="date"
+                value={content.tournament_date}
+                onChange={(e) => setContent({ ...content, tournament_date: e.target.value })}
+              />
+            </div>
+
             <Button variant="hero" onClick={saveContent} disabled={saving}>
               <Save className="mr-2 h-4 w-4" /> Save Content
             </Button>
           </div>
         </section>
 
-        {/* Player Editor */}
         <section className="border border-border bg-card/40 p-6">
           <h2 className="mb-6 font-display text-2xl">Player Editor</h2>
           <div className="mb-6 flex gap-2">

@@ -198,11 +198,11 @@ const Index = () => {
     };
   }, [ratedPlayers, content]);
 
-  const loadContent = async () => {
+  const loadContent = async (isActive = true) => {
     try {
       const { data, error } = await supabase.from("site_content").select("key, content");
       if (error) throw error;
-      if (data) {
+      if (data && isActive) {
         const contentMap = data.reduce(
           (acc, item) => ({ ...acc, [item.key]: item.content }),
           {} as SiteContent,
@@ -214,18 +214,18 @@ const Index = () => {
     }
   };
 
-  const loadPlayers = async () => {
+  const loadPlayers = async (isActive = true) => {
     try {
       const { data, error } = await supabase
         .from("player_stats")
         .select("*")
         .order("codename");
       if (error) throw error;
-      setPlayers((data || []) as Player[]);
+      if (isActive) {
+        setPlayers((data || []) as Player[]);
+      }
     } catch (error) {
       console.error("Error loading players:", error);
-    } finally {
-      setLoading(false);
     }
   };
 

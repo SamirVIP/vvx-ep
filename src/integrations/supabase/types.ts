@@ -31,25 +31,43 @@ export type Database = {
       }
       player_stats: {
         Row: {
+          age: number | null
+          bio: string | null
           codename: string
+          country: string | null
           id: string
+          image_url: string | null
           player_id: string
+          real_name: string | null
+          role: string | null
           stats: Json
           trends: Json
           updated_at: string
         }
         Insert: {
+          age?: number | null
+          bio?: string | null
           codename: string
+          country?: string | null
           id?: string
+          image_url?: string | null
           player_id: string
+          real_name?: string | null
+          role?: string | null
           stats?: Json
           trends?: Json
           updated_at?: string
         }
         Update: {
+          age?: number | null
+          bio?: string | null
           codename?: string
+          country?: string | null
           id?: string
+          image_url?: string | null
           player_id?: string
+          real_name?: string | null
+          role?: string | null
           stats?: Json
           trends?: Json
           updated_at?: string
@@ -77,6 +95,27 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      site_content: {
+        Row: {
+          content: string
+          id: string
+          key: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          id?: string
+          key: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          id?: string
+          key?: string
+          updated_at?: string
         }
         Relationships: []
       }

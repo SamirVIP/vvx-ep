@@ -98,6 +98,19 @@ const Admin = () => {
     if (data && data.length > 0) setSelectedPlayer(data[0] as Player);
   };
 
+  const setAwardValue = (field: AwardFieldKey, value: string) => {
+    setContent((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const setAwardFromSelectedPlayer = (field: AwardFieldKey) => {
+    if (!selectedPlayer) return;
+    setAwardValue(field, selectedPlayer.codename);
+  };
+
+  const clearAwardValue = (field: AwardFieldKey) => {
+    setAwardValue(field, "");
+  };
+
   const saveContent = async () => {
     setSaving(true);
     try {

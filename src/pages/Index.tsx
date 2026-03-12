@@ -284,6 +284,37 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <header className="fixed left-0 top-0 z-50 p-6">
+        <Sheet open={playerMenuOpen} onOpenChange={setPlayerMenuOpen}>
+          <SheetTrigger asChild>
+            <Button variant="cathedral" size="sm" type="button" aria-label="Open player menu">
+              <Menu className="h-4 w-4" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[85vw] sm:max-w-sm">
+            <SheetHeader>
+              <SheetTitle>All Players</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6 space-y-2">
+              {sortedPlayers.map((player) => (
+                <Button
+                  key={`menu-${player.id}`}
+                  type="button"
+                  variant={selectedPlayer?.id === player.id ? "hero" : "cathedral"}
+                  className="h-auto w-full justify-start px-3 py-3 text-left"
+                  onClick={() => handlePlayerSelect(player.id)}
+                >
+                  <span className="flex flex-col gap-0.5">
+                    <span className="font-display text-base">{player.codename}</span>
+                    <span className="text-xs text-muted-foreground">UID: {player.player_id || "Not set"}</span>
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </header>
+
       <header className="fixed right-0 top-0 z-50 flex items-center gap-3 p-6">
         {user ? (
           <>

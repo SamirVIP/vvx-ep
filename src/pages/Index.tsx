@@ -290,7 +290,7 @@ const Index = () => {
               <Menu className="h-4 w-4" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[85vw] sm:max-w-sm">
+          <SheetContent side="left" className="w-[85vw] overflow-y-auto sm:max-w-sm">
             <SheetHeader>
               <SheetTitle>All Players</SheetTitle>
             </SheetHeader>
@@ -310,6 +310,64 @@ const Index = () => {
                 </Button>
               ))}
             </div>
+
+            {selectedPlayer && (
+              <Card className="mt-6 bg-card/40">
+                <CardContent className="space-y-4 p-4">
+                  {selectedPlayer.image_url ? (
+                    <img
+                      src={selectedPlayer.image_url}
+                      alt={`${selectedPlayer.codename} full profile`}
+                      className="h-52 w-full border border-border object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-52 w-full border border-border bg-muted" />
+                  )}
+
+                  <div>
+                    <h3 className="font-display text-2xl">{selectedPlayer.codename}</h3>
+                    <p className="text-xs text-muted-foreground">Last updated: {formatUpdatedDate(selectedPlayer.updated_at)}</p>
+                  </div>
+
+                  <div className="grid gap-2 text-sm">
+                    <p><span className="text-muted-foreground">In-Game UID:</span> {selectedPlayer.player_id || "-"}</p>
+                    <p><span className="text-muted-foreground">Real Name:</span> {selectedPlayer.real_name || "-"}</p>
+                    <p><span className="text-muted-foreground">Role:</span> {selectedPlayer.role || "-"}</p>
+                    <p><span className="text-muted-foreground">Country:</span> {selectedPlayer.country || "-"}</p>
+                    <p><span className="text-muted-foreground">Age:</span> {selectedPlayer.age ?? "-"}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${getRatingDirection(selectedPlayer.rating).badgeClass}`}
+                    >
+                      {getRatingDirection(selectedPlayer.rating).icon}
+                      {getRatingDirection(selectedPlayer.rating).label}
+                    </span>
+                    <p className={`text-sm ${getRatingToneClass(selectedPlayer.rating)}`}>
+                      Rating: {selectedPlayer.rating.toFixed(2)} / 10.00
+                    </p>
+                  </div>
+
+                  {getRoleBadges(selectedPlayer.role).length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {getRoleBadges(selectedPlayer.role).map((badge) => (
+                        <span
+                          key={`${selectedPlayer.id}-${badge.key}`}
+                          className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] ${badge.className}`}
+                        >
+                          {badge.icon}
+                          {badge.label}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="text-sm text-muted-foreground">{selectedPlayer.bio || "No bio available."}</p>
+                </CardContent>
+              </Card>
+            )}
           </SheetContent>
         </Sheet>
       </header>

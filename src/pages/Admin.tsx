@@ -358,7 +358,12 @@ const Admin = () => {
         </div>
 
         <section className="mb-12 border border-border bg-card/40 p-6">
-          <h2 className="mb-6 font-display text-2xl">Site Content</h2>
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="font-display text-2xl">Site Content</h2>
+            <Badge variant={hasAnyContentUnsavedChanges ? "destructive" : "secondary"}>
+              {hasAnyContentUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+            </Badge>
+          </div>
           <div className="space-y-4">
             <div>
               <Label>Hero Title</Label>
@@ -373,17 +378,27 @@ const Admin = () => {
               <Textarea value={content.team_description} onChange={(e) => setContent({ ...content, team_description: e.target.value })} />
             </div>
 
-            <Button
-              type="button"
-              variant="hero"
-              onClick={() => saveContentFields(["hero_title", "hero_tagline", "team_description"], "Hero section saved")}
-              disabled={saving}
-            >
-              <Save className="mr-2 h-4 w-4" /> Save Hero Section
-            </Button>
+            <div className="flex items-center justify-between gap-3">
+              <Button
+                type="button"
+                variant="hero"
+                onClick={() => saveContentFields(heroSectionFields, "Hero section saved")}
+                disabled={saving || !heroHasUnsavedChanges}
+              >
+                <Save className="mr-2 h-4 w-4" /> Save Hero Section
+              </Button>
+              <Badge variant={heroHasUnsavedChanges ? "destructive" : "secondary"}>
+                {heroHasUnsavedChanges ? "Unsaved" : "Saved"}
+              </Badge>
+            </div>
 
             <div className="space-y-4 border border-border bg-background/40 p-4">
-              <h3 className="font-display text-xl">Player Awards (Add / Delete)</h3>
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="font-display text-xl">Player Awards (Add / Delete)</h3>
+                <Badge variant={awardsHasUnsavedChanges ? "destructive" : "secondary"}>
+                  {awardsHasUnsavedChanges ? "Unsaved" : "Saved"}
+                </Badge>
+              </div>
               {awardFields.map((award) => (
                 <div key={award.key} className="space-y-2">
                   <Label>{award.label} (Leader choice)</Label>
@@ -449,20 +464,20 @@ const Admin = () => {
               <Button
                 type="button"
                 variant="hero"
-                onClick={() =>
-                  saveContentFields(
-                    ["player_of_match", "player_of_month", "player_of_season", "player_of_tournament", "tournament_date", "last_tournament_stats", "leaderboard_photo_url"],
-                    "Awards and tournament settings saved",
-                  )
-                }
-                disabled={saving}
+                onClick={() => saveContentFields(awardsSectionFields, "Awards and tournament settings saved")}
+                disabled={saving || !awardsHasUnsavedChanges}
               >
                 <Save className="mr-2 h-4 w-4" /> Save Awards & Tournament
               </Button>
             </div>
 
             <div className="space-y-4 border border-border bg-background/40 p-4">
-              <h3 className="font-display text-xl">About Section + Socials</h3>
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="font-display text-xl">About Section + Socials</h3>
+                <Badge variant={aboutHasUnsavedChanges ? "destructive" : "secondary"}>
+                  {aboutHasUnsavedChanges ? "Unsaved" : "Saved"}
+                </Badge>
+              </div>
               <div>
                 <Label>About Title</Label>
                 <Input value={content.about_title} onChange={(e) => setContent({ ...content, about_title: e.target.value })} />
@@ -494,14 +509,14 @@ const Admin = () => {
               <Button
                 type="button"
                 variant="hero"
-                onClick={() => saveContentFields(["about_title", "about_description", "facebook_url", "discord_url"], "About and socials saved")}
-                disabled={saving}
+                onClick={() => saveContentFields(aboutSectionFields, "About and socials saved")}
+                disabled={saving || !aboutHasUnsavedChanges}
               >
                 <Save className="mr-2 h-4 w-4" /> Save About & Socials
               </Button>
             </div>
 
-            <Button type="button" variant="hero" onClick={saveContent} disabled={saving}>
+            <Button type="button" variant="hero" onClick={saveContent} disabled={saving || !hasAnyContentUnsavedChanges}>
               <Save className="mr-2 h-4 w-4" /> Save All Site Content
             </Button>
           </div>

@@ -212,6 +212,7 @@ const Index = () => {
 
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayerId(playerId);
+    setPlayerMenuOpen(false);
   };
 
   const findPlayerByManualValue = (manualValue: string) => {

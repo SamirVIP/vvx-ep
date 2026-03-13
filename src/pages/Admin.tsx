@@ -543,7 +543,12 @@ const Admin = () => {
         </section>
 
         <section className="border border-border bg-card/40 p-6">
-          <h2 className="mb-6 font-display text-2xl">Player Editor</h2>
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="font-display text-2xl">Player Editor</h2>
+            <Badge variant={selectedPlayerHasUnsavedChanges ? "destructive" : "secondary"}>
+              {selectedPlayerHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+            </Badge>
+          </div>
           <div className="mb-6 flex flex-wrap items-center gap-2 overflow-x-auto pb-2">
             <Button type="button" variant="outline" onClick={addNewPlayer}>
               Add Player/Member

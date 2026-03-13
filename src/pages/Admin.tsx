@@ -693,7 +693,7 @@ const Admin = () => {
           )}
 
           <div className="mt-6 flex gap-3">
-            <Button variant="hero" onClick={savePlayer} disabled={saving || !selectedPlayer}>
+            <Button variant="hero" onClick={savePlayer} disabled={saving || !selectedPlayer || !selectedPlayerHasUnsavedChanges}>
               <Save className="mr-2 h-4 w-4" /> Save Player
             </Button>
           </div>

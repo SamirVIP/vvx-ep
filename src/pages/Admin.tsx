@@ -246,6 +246,8 @@ const Admin = () => {
     try {
       const playerToSave = {
         ...selectedPlayer,
+        role: normalizeRole(selectedPlayer.role),
+        updated_at: new Date().toISOString(),
         stats: {
           ...selectedPlayer.stats,
           rating,

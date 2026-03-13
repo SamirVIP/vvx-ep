@@ -247,7 +247,7 @@ const Admin = () => {
 
   const uploadPlayerImage = async (file: File) => {
     if (!selectedPlayer) return;
-    setUploading(true);
+    setUploadingPlayerImage(true);
     try {
       const fileExt = file.name.split(".").pop();
       const safePlayerId = selectedPlayer.player_id.trim() || selectedPlayer.id;
@@ -266,7 +266,29 @@ const Admin = () => {
       console.error("Error uploading player image:", error);
       toast.error("Failed to upload image");
     } finally {
-      setUploading(false);
+      setUploadingPlayerImage(false);
+    }
+  };
+
+  const uploadLeaderboardImage = async (file: File) => {
+    setUploadingLeaderboardImage(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `leaderboard-${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage.from("site-assets").upload(`tournaments/${fileName}`, file);
+      if (uploadError) throw uploadError;
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("site-assets").getPublicUrl(`tournaments/${fileName}`);
+
+      setContent((prev) => ({ ...prev, leaderboard_photo_url: publicUrl }));
+      toast.success("Leaderboard photo uploaded");
+    } catch (error) {
+      console.error("Error uploading leaderboard image:", error);
+      toast.error("Failed to upload leaderboard photo");
+    } finally {
+      setUploadingLeaderboardImage(false);
     }
   };
 

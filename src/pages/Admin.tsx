@@ -499,7 +499,7 @@ const Admin = () => {
                   <Select
                     value={selectedPlayer.role || "__none__"}
                     onValueChange={(value) =>
-                      setSelectedPlayer({ ...selectedPlayer, role: value === "__none__" ? null : value })
+                      setSelectedPlayer({ ...selectedPlayer, role: value === "__none__" ? null : normalizeRole(value) })
                     }
                   >
                     <SelectTrigger>

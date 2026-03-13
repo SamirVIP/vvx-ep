@@ -169,7 +169,10 @@ const Admin = () => {
       const { data, error } = await supabase.from("player_stats").select("*").order("codename");
       if (error) throw error;
 
-      const nextPlayers = (data || []) as Player[];
+      const nextPlayers = ((data || []) as Player[]).map((player) => ({
+        ...player,
+        role: normalizeRole(player.role),
+      }));
       setPlayers(nextPlayers);
       setSelectedPlayer((prevSelected) => {
         if (nextPlayers.length === 0) return null;

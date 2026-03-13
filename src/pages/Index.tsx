@@ -92,6 +92,21 @@ const getRatingDirection = (rating: number) => {
   };
 };
 
+const normalizeRole = (value: string | null) => {
+  if (!value) return null;
+
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return null;
+
+  if (normalized.includes("igl") || normalized.includes("leader")) return "IGL/Leader";
+  if (normalized.includes("rusher") || normalized.includes("entry")) return normalized.includes("entry") ? "Entry Fragger" : "Rusher";
+  if (normalized.includes("assaulter") || normalized.includes("assault")) return "Assaulter";
+  if (normalized.includes("support") || normalized.includes("supporter")) return "Supporter";
+  if (normalized.includes("boomber") || normalized.includes("bomber")) return "Boomber";
+
+  return value.trim();
+};
+
 const getRoleBadges = (role: string | null) => {
   const value = (role ?? "").toLowerCase();
   const badges: Array<{ key: string; label: string; icon: ReactNode; className: string }> = [];

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,6 +36,35 @@ interface SiteContent {
 
 type SiteContentKey = keyof SiteContent;
 
+const initialContent: SiteContent = {
+  hero_title: "",
+  hero_tagline: "",
+  team_description: "",
+  player_of_match: "",
+  player_of_month: "",
+  player_of_season: "",
+  player_of_tournament: "",
+  tournament_date: "",
+  last_tournament_stats: "",
+  leaderboard_photo_url: "",
+  about_title: "",
+  about_description: "",
+  facebook_url: "",
+  discord_url: "",
+};
+
+const heroSectionFields: SiteContentKey[] = ["hero_title", "hero_tagline", "team_description"];
+const awardsSectionFields: SiteContentKey[] = [
+  "player_of_match",
+  "player_of_month",
+  "player_of_season",
+  "player_of_tournament",
+  "tournament_date",
+  "last_tournament_stats",
+  "leaderboard_photo_url",
+];
+const aboutSectionFields: SiteContentKey[] = ["about_title", "about_description", "facebook_url", "discord_url"];
+
 interface Player {
   id: string;
   player_id: string;
@@ -67,20 +97,8 @@ const normalizeRole = (value: string | null) => {
   return value.trim();
 };
 
-const createNewPlayer = (): Player => ({
-  id: crypto.randomUUID(),
-  player_id: "",
-  codename: "New Member",
-  real_name: null,
-  role: null,
-  country: null,
-  age: null,
-  bio: null,
-  image_url: null,
-  stats: { rating: 1 },
-  trends: {},
-  updated_at: new Date().toISOString(),
-});
+const hasUnsavedSectionChanges = (current: SiteContent, saved: SiteContent, fields: SiteContentKey[]) =>
+  fields.some((field) => (current[field] ?? "") !== (saved[field] ?? ""));
 
 const awardFields = [
   { key: "player_of_match", label: "Player of the Match" },
@@ -107,31 +125,57 @@ const formatUpdatedDate = (updatedAt: string) => {
   return date.toISOString().slice(0, 10);
 };
 
+const createNewPlayer = (): Player => ({
+  id: crypto.randomUUID(),
+  player_id: "",
+  codename: "New Member",
+  real_name: null,
+  role: null,
+  country: null,
+  age: null,
+  bio: null,
+  image_url: null,
+  stats: { rating: 1 },
+  trends: {},
+  updated_at: new Date().toISOString(),
+});
+
+const normalizePlayerForComparison = (player: Player) => ({
+  player_id: player.player_id?.trim() ?? "",
+  codename: player.codename?.trim() ?? "",
+  real_name: player.real_name?.trim() ?? "",
+  role: normalizeRole(player.role),
+  country: player.country?.trim() ?? "",
+  age: player.age ?? null,
+  bio: player.bio?.trim() ?? "",
+  image_url: player.image_url ?? "",
+  rating: getPlayerRatingValue(player.stats),
+  trends: player.trends ?? {},
+});
+
 const Admin = () => {
   const { isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [content, setContent] = useState<SiteContent>({
-    hero_title: "",
-    hero_tagline: "",
-    team_description: "",
-    player_of_match: "",
-    player_of_month: "",
-    player_of_season: "",
-    player_of_tournament: "",
-    tournament_date: "",
-    last_tournament_stats: "",
-    leaderboard_photo_url: "",
-    about_title: "",
-    about_description: "",
-    facebook_url: "",
-    discord_url: "",
-  });
+  const [content, setContent] = useState<SiteContent>(initialContent);
+  const [savedContent, setSavedContent] = useState<SiteContent>(initialContent);
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [ratingInput, setRatingInput] = useState("1.00");
   const [uploadingPlayerImage, setUploadingPlayerImage] = useState(false);
   const [uploadingLeaderboardImage, setUploadingLeaderboardImage] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const heroHasUnsavedChanges = hasUnsavedSectionChanges(content, savedContent, heroSectionFields);
+  const awardsHasUnsavedChanges = hasUnsavedSectionChanges(content, savedContent, awardsSectionFields);
+  const aboutHasUnsavedChanges = hasUnsavedSectionChanges(content, savedContent, aboutSectionFields);
+  const hasAnyContentUnsavedChanges = heroHasUnsavedChanges || awardsHasUnsavedChanges || aboutHasUnsavedChanges;
+
+  const selectedPlayerSnapshot = selectedPlayer ? normalizePlayerForComparison(selectedPlayer) : null;
+  const persistedSelectedPlayer = selectedPlayer ? players.find((player) => player.id === selectedPlayer.id) : null;
+  const persistedSelectedPlayerSnapshot = persistedSelectedPlayer ? normalizePlayerForComparison(persistedSelectedPlayer) : null;
+  const selectedPlayerHasUnsavedChanges = selectedPlayer
+    ? !persistedSelectedPlayerSnapshot || JSON.stringify(selectedPlayerSnapshot) !== JSON.stringify(persistedSelectedPlayerSnapshot)
+    : false;
 
   useEffect(() => {
     if (!authLoading && !isAdmin) {
@@ -158,7 +202,9 @@ const Admin = () => {
 
       if (data) {
         const contentMap = data.reduce((acc, item) => ({ ...acc, [item.key]: item.content }), {} as Partial<SiteContent>);
-        setContent((prev) => ({ ...prev, ...contentMap }));
+        const nextContent = { ...initialContent, ...contentMap };
+        setContent(nextContent);
+        setSavedContent(nextContent);
       }
     } catch (error) {
       console.error("Error loading content:", error);
@@ -332,7 +378,12 @@ const Admin = () => {
         </div>
 
         <section className="mb-12 border border-border bg-card/40 p-6">
-          <h2 className="mb-6 font-display text-2xl">Site Content</h2>
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="font-display text-2xl">Site Content</h2>
+            <Badge variant={hasAnyContentUnsavedChanges ? "destructive" : "secondary"}>
+              {hasAnyContentUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+            </Badge>
+          </div>
           <div className="space-y-4">
             <div>
               <Label>Hero Title</Label>
@@ -347,17 +398,27 @@ const Admin = () => {
               <Textarea value={content.team_description} onChange={(e) => setContent({ ...content, team_description: e.target.value })} />
             </div>
 
-            <Button
-              type="button"
-              variant="hero"
-              onClick={() => saveContentFields(["hero_title", "hero_tagline", "team_description"], "Hero section saved")}
-              disabled={saving}
-            >
-              <Save className="mr-2 h-4 w-4" /> Save Hero Section
-            </Button>
+            <div className="flex items-center justify-between gap-3">
+              <Button
+                type="button"
+                variant="hero"
+                onClick={() => saveContentFields(heroSectionFields, "Hero section saved")}
+                disabled={saving || !heroHasUnsavedChanges}
+              >
+                <Save className="mr-2 h-4 w-4" /> Save Hero Section
+              </Button>
+              <Badge variant={heroHasUnsavedChanges ? "destructive" : "secondary"}>
+                {heroHasUnsavedChanges ? "Unsaved" : "Saved"}
+              </Badge>
+            </div>
 
             <div className="space-y-4 border border-border bg-background/40 p-4">
-              <h3 className="font-display text-xl">Player Awards (Add / Delete)</h3>
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="font-display text-xl">Player Awards (Add / Delete)</h3>
+                <Badge variant={awardsHasUnsavedChanges ? "destructive" : "secondary"}>
+                  {awardsHasUnsavedChanges ? "Unsaved" : "Saved"}
+                </Badge>
+              </div>
               {awardFields.map((award) => (
                 <div key={award.key} className="space-y-2">
                   <Label>{award.label} (Leader choice)</Label>
@@ -423,20 +484,20 @@ const Admin = () => {
               <Button
                 type="button"
                 variant="hero"
-                onClick={() =>
-                  saveContentFields(
-                    ["player_of_match", "player_of_month", "player_of_season", "player_of_tournament", "tournament_date", "last_tournament_stats", "leaderboard_photo_url"],
-                    "Awards and tournament settings saved",
-                  )
-                }
-                disabled={saving}
+                onClick={() => saveContentFields(awardsSectionFields, "Awards and tournament settings saved")}
+                disabled={saving || !awardsHasUnsavedChanges}
               >
                 <Save className="mr-2 h-4 w-4" /> Save Awards & Tournament
               </Button>
             </div>
 
             <div className="space-y-4 border border-border bg-background/40 p-4">
-              <h3 className="font-display text-xl">About Section + Socials</h3>
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="font-display text-xl">About Section + Socials</h3>
+                <Badge variant={aboutHasUnsavedChanges ? "destructive" : "secondary"}>
+                  {aboutHasUnsavedChanges ? "Unsaved" : "Saved"}
+                </Badge>
+              </div>
               <div>
                 <Label>About Title</Label>
                 <Input value={content.about_title} onChange={(e) => setContent({ ...content, about_title: e.target.value })} />
@@ -468,21 +529,26 @@ const Admin = () => {
               <Button
                 type="button"
                 variant="hero"
-                onClick={() => saveContentFields(["about_title", "about_description", "facebook_url", "discord_url"], "About and socials saved")}
-                disabled={saving}
+                onClick={() => saveContentFields(aboutSectionFields, "About and socials saved")}
+                disabled={saving || !aboutHasUnsavedChanges}
               >
                 <Save className="mr-2 h-4 w-4" /> Save About & Socials
               </Button>
             </div>
 
-            <Button type="button" variant="hero" onClick={saveContent} disabled={saving}>
+            <Button type="button" variant="hero" onClick={saveContent} disabled={saving || !hasAnyContentUnsavedChanges}>
               <Save className="mr-2 h-4 w-4" /> Save All Site Content
             </Button>
           </div>
         </section>
 
         <section className="border border-border bg-card/40 p-6">
-          <h2 className="mb-6 font-display text-2xl">Player Editor</h2>
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="font-display text-2xl">Player Editor</h2>
+            <Badge variant={selectedPlayerHasUnsavedChanges ? "destructive" : "secondary"}>
+              {selectedPlayerHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+            </Badge>
+          </div>
           <div className="mb-6 flex flex-wrap items-center gap-2 overflow-x-auto pb-2">
             <Button type="button" variant="outline" onClick={addNewPlayer}>
               Add Player/Member
@@ -627,7 +693,7 @@ const Admin = () => {
           )}
 
           <div className="mt-6 flex gap-3">
-            <Button variant="hero" onClick={savePlayer} disabled={saving || !selectedPlayer}>
+            <Button variant="hero" onClick={savePlayer} disabled={saving || !selectedPlayer || !selectedPlayerHasUnsavedChanges}>
               <Save className="mr-2 h-4 w-4" /> Save Player
             </Button>
           </div>

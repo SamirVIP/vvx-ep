@@ -170,6 +170,13 @@ const Admin = () => {
   const aboutHasUnsavedChanges = hasUnsavedSectionChanges(content, savedContent, aboutSectionFields);
   const hasAnyContentUnsavedChanges = heroHasUnsavedChanges || awardsHasUnsavedChanges || aboutHasUnsavedChanges;
 
+  const selectedPlayerSnapshot = selectedPlayer ? normalizePlayerForComparison(selectedPlayer) : null;
+  const persistedSelectedPlayer = selectedPlayer ? players.find((player) => player.id === selectedPlayer.id) : null;
+  const persistedSelectedPlayerSnapshot = persistedSelectedPlayer ? normalizePlayerForComparison(persistedSelectedPlayer) : null;
+  const selectedPlayerHasUnsavedChanges = selectedPlayer
+    ? !persistedSelectedPlayerSnapshot || JSON.stringify(selectedPlayerSnapshot) !== JSON.stringify(persistedSelectedPlayerSnapshot)
+    : false;
+
   useEffect(() => {
     if (!authLoading && !isAdmin) {
       navigate("/");

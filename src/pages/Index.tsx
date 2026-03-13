@@ -221,27 +221,38 @@ const Index = () => {
   );
 
   useEffect(() => {
-    if (ratedPlayers.length > 0 && !selectedPlayerId) {
-      setSelectedPlayerId(ratedPlayers[0].id);
+    if (sortedPlayers.length > 0 && !selectedPlayerId) {
+      const iglLeaderPlayer = sortedPlayers.find((player) => {
+        const value = (player.role ?? "").toLowerCase();
+        return value.includes("igl") || value.includes("leader");
+      });
+      setSelectedPlayerId((iglLeaderPlayer ?? sortedPlayers[0]).id);
     }
-  }, [ratedPlayers, selectedPlayerId]);
-
-  const sortedPlayers = useMemo(() => {
-    return [...ratedPlayers].sort((a, b) => {
-      const priorityDiff = getRolePriority(a.role) - getRolePriority(b.role);
-      if (priorityDiff !== 0) return priorityDiff;
-      return a.codename.localeCompare(b.codename);
-    });
-  }, [ratedPlayers]);
+  }, [sortedPlayers, selectedPlayerId]);
 
   const selectedPlayer = useMemo(
     () => sortedPlayers.find((player) => player.id === selectedPlayerId) ?? sortedPlayers[0] ?? null,
     [sortedPlayers, selectedPlayerId],
   );
 
+  const defaultMenuPlayer = useMemo(() => {
+    return (
+      sortedPlayers.find((player) => {
+        const value = (player.role ?? "").toLowerCase();
+        return value.includes("igl") || value.includes("leader");
+      }) ?? sortedPlayers[0] ?? null
+    );
+  }, [sortedPlayers]);
+
+  const handlePlayerMenuOpenChange = (open: boolean) => {
+    setPlayerMenuOpen(open);
+    if (open && defaultMenuPlayer) {
+      setSelectedPlayerId(defaultMenuPlayer.id);
+    }
+  };
+
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayerId(playerId);
-    setPlayerMenuOpen(false);
   };
 
   const findPlayerByManualValue = (manualValue: string) => {

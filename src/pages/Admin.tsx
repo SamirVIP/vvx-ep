@@ -367,6 +367,22 @@ const Admin = () => {
                   placeholder="Example: Maps Won: 4 | Kills: 289 | MVP: NYX"
                 />
               </div>
+              <div>
+                <Label>Leaderboard Photo (Optional)</Label>
+                {content.leaderboard_photo_url && (
+                  <img
+                    src={content.leaderboard_photo_url}
+                    alt="Last tournament leaderboard"
+                    className="mb-2 h-56 w-full rounded bg-muted object-contain"
+                  />
+                )}
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => e.target.files?.[0] && uploadLeaderboardImage(e.target.files[0])}
+                  disabled={uploadingLeaderboardImage}
+                />
+              </div>
             </div>
 
             <div className="space-y-4 border border-border bg-background/40 p-4">

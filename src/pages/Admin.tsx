@@ -33,6 +33,8 @@ interface SiteContent {
   discord_url: string;
 }
 
+type SiteContentKey = keyof SiteContent;
+
 interface Player {
   id: string;
   player_id: string;
@@ -205,20 +207,24 @@ const Admin = () => {
     setRatingInput("1.00");
   };
 
-  const saveContent = async () => {
+  const saveContentFields = async (fields: SiteContentKey[], successMessage = "Content saved") => {
     setSaving(true);
     try {
-      const contentPayload = Object.entries(content).map(([key, value]) => ({ key, content: value }));
+      const contentPayload = fields.map((key) => ({ key, content: content[key] ?? "" }));
       const { error } = await supabase.from("site_content").upsert(contentPayload, { onConflict: "key" });
       if (error) throw error;
       await loadContent();
-      toast.success("Content saved");
+      toast.success(successMessage);
     } catch (error) {
       console.error("Error saving content:", error);
       toast.error("Failed to save content");
     } finally {
       setSaving(false);
     }
+  };
+
+  const saveContent = async () => {
+    await saveContentFields(Object.keys(content) as SiteContentKey[]);
   };
 
   const savePlayer = async () => {
@@ -341,6 +347,15 @@ const Admin = () => {
               <Textarea value={content.team_description} onChange={(e) => setContent({ ...content, team_description: e.target.value })} />
             </div>
 
+            <Button
+              type="button"
+              variant="hero"
+              onClick={() => saveContentFields(["hero_title", "hero_tagline", "team_description"], "Hero section saved")}
+              disabled={saving}
+            >
+              <Save className="mr-2 h-4 w-4" /> Save Hero Section
+            </Button>
+
             <div className="space-y-4 border border-border bg-background/40 p-4">
               <h3 className="font-display text-xl">Player Awards (Add / Delete)</h3>
               {awardFields.map((award) => (
@@ -404,6 +419,20 @@ const Admin = () => {
                   disabled={uploadingLeaderboardImage}
                 />
               </div>
+
+              <Button
+                type="button"
+                variant="hero"
+                onClick={() =>
+                  saveContentFields(
+                    ["player_of_match", "player_of_month", "player_of_season", "player_of_tournament", "tournament_date", "last_tournament_stats", "leaderboard_photo_url"],
+                    "Awards and tournament settings saved",
+                  )
+                }
+                disabled={saving}
+              >
+                <Save className="mr-2 h-4 w-4" /> Save Awards & Tournament
+              </Button>
             </div>
 
             <div className="space-y-4 border border-border bg-background/40 p-4">
@@ -435,10 +464,19 @@ const Admin = () => {
                   placeholder="https://discord.gg/yourserver"
                 />
               </div>
+
+              <Button
+                type="button"
+                variant="hero"
+                onClick={() => saveContentFields(["about_title", "about_description", "facebook_url", "discord_url"], "About and socials saved")}
+                disabled={saving}
+              >
+                <Save className="mr-2 h-4 w-4" /> Save About & Socials
+              </Button>
             </div>
 
-            <Button variant="hero" onClick={saveContent} disabled={saving}>
-              <Save className="mr-2 h-4 w-4" /> Save Content
+            <Button type="button" variant="hero" onClick={saveContent} disabled={saving}>
+              <Save className="mr-2 h-4 w-4" /> Save All Site Content
             </Button>
           </div>
         </section>

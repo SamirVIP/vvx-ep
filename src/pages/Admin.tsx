@@ -257,7 +257,7 @@ const Admin = () => {
       const { error } = await supabase.from("player_stats").upsert(playerToSave, { onConflict: "id" });
       if (error) throw error;
       toast.success("Player saved");
-      void loadPlayers();
+      await loadPlayers();
     } catch (error) {
       console.error("Error saving player:", error);
       toast.error("Failed to save player");

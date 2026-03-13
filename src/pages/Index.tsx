@@ -36,6 +36,7 @@ interface SiteContent {
   player_of_tournament: string;
   tournament_date: string;
   last_tournament_stats: string;
+  leaderboard_photo_url: string;
   about_title: string;
   about_description: string;
   facebook_url: string;

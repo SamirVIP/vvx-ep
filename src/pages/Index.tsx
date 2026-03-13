@@ -151,6 +151,15 @@ const getRolePriority = (role: string | null) => {
   return 5;
 };
 
+const awardFieldConfig = [
+  { key: "player_of_match", label: "Player of the Match", icon: Trophy },
+  { key: "player_of_month", label: "Player of the Month", icon: Star },
+  { key: "player_of_season", label: "Player of the Season", icon: Medal },
+  { key: "player_of_tournament", label: "Player of the Tournament", icon: Crown },
+] as const;
+
+type AwardFieldKey = (typeof awardFieldConfig)[number]["key"];
+
 const Index = () => {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();

@@ -594,7 +594,7 @@ const Admin = () => {
           ) : (
             <div className="space-y-4">
               {applications.map((application) => {
-                const statusVariant =
+                const statusVariant: "secondary" | "destructive" | "outline" =
                   application.status === "accepted"
                     ? "secondary"
                     : application.status === "rejected"

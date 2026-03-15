@@ -80,6 +80,19 @@ interface Player {
   updated_at: string;
 }
 
+interface JoinApplication {
+  id: string;
+  user_id: string;
+  real_name: string;
+  in_game_name: string;
+  game_uid: string;
+  gameplay_clip: string;
+  playing_role: string;
+  whatsapp: string;
+  status: string;
+  created_at: string;
+}
+
 const roleOptions = ["Rusher", "Assaulter", "Supporter", "Boomber", "IGL/Leader", "Entry Fragger"];
 
 const normalizeRole = (value: string | null) => {

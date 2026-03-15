@@ -172,6 +172,7 @@ const Admin = () => {
   const [content, setContent] = useState<SiteContent>(initialContent);
   const [savedContent, setSavedContent] = useState<SiteContent>(initialContent);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [applications, setApplications] = useState<JoinApplication[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [ratingInput, setRatingInput] = useState("1.00");
   const [uploadingPlayerImage, setUploadingPlayerImage] = useState(false);

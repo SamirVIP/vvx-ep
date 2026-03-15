@@ -199,8 +199,7 @@ const Admin = () => {
 
   useEffect(() => {
     if (isAdmin) {
-      void loadContent();
-      void loadPlayers();
+      void Promise.all([loadContent(), loadPlayers(), loadApplications()]);
     }
   }, [isAdmin]);
 

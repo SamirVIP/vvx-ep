@@ -34,6 +34,8 @@ interface SiteContent {
   hero_title: string;
   hero_tagline: string;
   team_description: string;
+  featured_video_url: string;
+  featured_video_thumbnail_url: string;
   player_of_match: string;
   player_of_month: string;
   player_of_season: string;

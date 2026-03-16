@@ -448,6 +448,22 @@ const Admin = () => {
               <Label>Team Description</Label>
               <Textarea value={content.team_description} onChange={(e) => setContent({ ...content, team_description: e.target.value })} />
             </div>
+            <div>
+              <Label>Featured Video URL</Label>
+              <Input
+                value={content.featured_video_url}
+                onChange={(e) => setContent({ ...content, featured_video_url: e.target.value })}
+                placeholder="https://youtube.com/watch?v=..."
+              />
+            </div>
+            <div>
+              <Label>Featured Video Thumbnail URL (Top of Website)</Label>
+              <Input
+                value={content.featured_video_thumbnail_url}
+                onChange={(e) => setContent({ ...content, featured_video_thumbnail_url: e.target.value })}
+                placeholder="https://.../thumbnail.jpg"
+              />
+            </div>
 
             <div className="flex items-center justify-between gap-3">
               <Button

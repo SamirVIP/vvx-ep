@@ -503,29 +503,45 @@ const Index = () => {
         </Sheet>
       </header>
 
-      <header className="fixed right-0 top-0 z-50 flex items-center gap-2 p-4 md:gap-3 md:p-6">
+      <header className="fixed right-2 top-2 z-50 flex max-w-[calc(100vw-1rem)] flex-wrap items-center justify-end gap-2 rounded-md border border-border bg-background/70 p-2 backdrop-blur-sm md:right-6 md:top-6 md:max-w-none md:flex-nowrap md:border-0 md:bg-transparent md:p-0">
         {user ? (
           <>
-            <Button variant="cathedral" size="sm" onClick={() => navigate("/apply")} aria-label="Apply to join team">
+            <Button variant="cathedral" size="icon" onClick={() => navigate("/apply")} aria-label="Apply to join team">
               <UserPlus className="h-4 w-4" />
             </Button>
-            <Button variant="cathedral" size="sm" onClick={() => navigate("/report")} aria-label="Report a player">
+            <Button variant="cathedral" size="icon" onClick={() => navigate("/report")} aria-label="Report a player">
               <FileWarning className="h-4 w-4" />
             </Button>
-            <Button variant="cathedral" size="sm" onClick={() => navigate("/inbox")} aria-label="Open inbox notifications">
+            <Button variant="cathedral" size="icon" onClick={() => navigate("/inbox")} aria-label="Open inbox notifications">
               <Bell className="h-4 w-4" />
             </Button>
             {isAdmin && (
-              <Button variant="hero" size="sm" onClick={() => navigate("/admin")} aria-label="Open admin panel">
+              <Button variant="hero" size="icon" onClick={() => navigate("/admin")} aria-label="Open admin panel">
                 <Settings className="h-4 w-4" />
               </Button>
             )}
-            <Button variant="ghost" size="sm" onClick={handleSignOut} aria-label="Sign out">
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <AlertDialog open={logoutConfirmOpen} onOpenChange={setLogoutConfirmOpen}>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Sign out">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Log out?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You will need to sign in again to access your account.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => void handleSignOut()}>Log out</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </>
         ) : (
-          <Button variant="cathedral" size="sm" onClick={() => navigate("/login")} aria-label="Login">
+          <Button variant="cathedral" size="icon" onClick={() => navigate("/login")} aria-label="Login">
             <LogIn className="h-4 w-4" />
           </Button>
         )}

@@ -106,6 +106,13 @@ interface JoinApplication {
   created_at: string;
 }
 
+interface RegisteredUser {
+  user_id: string;
+  email: string | null;
+  created_at: string;
+  email_confirmed_at: string | null;
+}
+
 const roleOptions = ["Rusher", "Supporter", "Sniper", "Assaulter", "Boomber", "IGL/Leader", "Entry Fragger"];
 
 const normalizeRole = (value: string | null) => {

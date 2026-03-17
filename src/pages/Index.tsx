@@ -23,7 +23,94 @@ import {
   Bell,
   CirclePlay,
 } from "lucide-react";
-...
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import teamLogo from "@/assets/velocity-vortex-x-logo.jpg";
+
+interface SiteContent {
+  hero_title: string;
+  hero_tagline: string;
+  team_description: string;
+  featured_video_title: string;
+  featured_video_url: string;
+  featured_video_thumbnail_url: string;
+  player_of_match: string;
+  player_of_month: string;
+  player_of_season: string;
+  player_of_tournament: string;
+  tournament_date: string;
+  last_tournament_stats: string;
+  leaderboard_photo_url: string;
+  about_title: string;
+  about_description: string;
+  facebook_url: string;
+  discord_url: string;
+}
+
+interface Player {
+  id: string;
+  player_id: string;
+  codename: string;
+  real_name: string | null;
+  role: string | null;
+  country: string | null;
+  age: number | null;
+  bio: string | null;
+  image_url: string | null;
+  stats: Record<string, number>;
+  updated_at: string;
+}
+
+const clampRating = (value: number) => {
+  if (Number.isNaN(value)) return 1;
+  return Math.min(10, Math.max(1, Number(value.toFixed(2))));
+};
+
+const getPlayerRating = (player: Player) => clampRating(Number(player.stats?.rating ?? 1));
+
+const formatUpdatedDate = (updatedAt: string) => {
+  const date = new Date(updatedAt);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toISOString().slice(0, 10);
+};
+
+const getRatingToneClass = (rating: number) => {
+  if (rating < 3) return "text-destructive";
+  if (rating < 7) return "text-highlight";
+  return "text-primary";
+};
+
+const getRatingDirection = (rating: number) => {
+  if (rating >= 7) {
+    return {
+      label: "Up",
+      icon: <TrendingUp className="h-3.5 w-3.5" />,
+      badgeClass: "border-primary/40 bg-primary/15 text-primary",
+    };
+  }
+
+  return {
+    label: "Down",
+    icon: <TrendingDown className="h-3.5 w-3.5" />,
+    badgeClass: "border-destructive/40 bg-destructive/10 text-destructive",
+  };
+};
+
 const normalizeRole = (value: string | null) => {
   if (!value) return null;
 

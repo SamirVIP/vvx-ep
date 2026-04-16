@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { CSSProperties } from "react";
 
 const Market = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const Market = () => {
           "--muted-foreground": "30 38% 72%",
           "--highlight": "22 76% 52%",
           "--highlight-foreground": "20 50% 10%",
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       <div className="mx-auto w-full max-w-6xl space-y-6">
@@ -31,7 +32,7 @@ const Market = () => {
         <Card className="border-border/80 bg-card/70 shadow-cathedral">
           <CardHeader>
             <div className="inline-flex w-fit items-center rounded-full border border-highlight/40 bg-highlight/20 px-3 py-1 text-xs font-semibold tracking-[0.12em] text-highlight">
-              ECD TAG
+              ECD TEXT TAG
             </div>
             <CardTitle className="text-4xl">ELITE CUP ORGANISATION</CardTitle>
           </CardHeader>

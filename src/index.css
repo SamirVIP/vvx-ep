@@ -10,82 +10,82 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 223 69% 10%;
+    --background: 222 78% 4%;
     --foreground: 210 40% 98%;
 
-    --surface: 218 38% 18%;
+    --surface: 221 44% 11%;
     --surface-foreground: 210 55% 96%;
 
-    --card: 223 54% 14%;
+    --card: 220 50% 9%;
     --card-foreground: 210 45% 98%;
 
-    --popover: 223 54% 14%;
+    --popover: 220 50% 9%;
     --popover-foreground: 210 45% 98%;
 
-    --primary: 189 100% 52%;
-    --primary-foreground: 223 69% 10%;
+    --primary: 194 100% 52%;
+    --primary-foreground: 222 78% 4%;
 
-    --highlight: 189 100% 52%;
-    --highlight-foreground: 223 69% 10%;
+    --highlight: 198 100% 58%;
+    --highlight-foreground: 222 78% 4%;
 
-    --secondary: 220 45% 20%;
+    --secondary: 221 34% 18%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 221 38% 18%;
-    --muted-foreground: 214 28% 74%;
+    --muted: 220 30% 14%;
+    --muted-foreground: 213 20% 70%;
 
-    --accent: 220 45% 20%;
+    --accent: 220 28% 22%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 75% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 33% 30%;
-    --input: 220 33% 24%;
-    --ring: 189 100% 52%;
+    --border: 217 30% 25%;
+    --input: 218 27% 19%;
+    --ring: 194 100% 52%;
 
     --radius: 0.2rem;
 
-    --gradient-cathedral: linear-gradient(120deg, hsl(var(--background)) 30%, hsl(var(--highlight) / 0.35) 52%, hsl(var(--background)) 72%);
-    --shadow-cathedral: 0 22px 50px -24px hsl(var(--highlight) / 0.7);
+    --gradient-cathedral: linear-gradient(120deg, hsl(var(--background)) 26%, hsl(var(--highlight) / 0.26) 52%, hsl(var(--background)) 74%);
+    --shadow-cathedral: 0 22px 50px -24px hsl(var(--highlight) / 0.55);
 
     --font-display: "Syne";
     --font-body: "Space Mono";
 
-    --sidebar-background: 223 58% 12%;
+    --sidebar-background: 221 56% 8%;
     --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 189 100% 52%;
-    --sidebar-primary-foreground: 223 69% 10%;
-    --sidebar-accent: 220 45% 18%;
+    --sidebar-primary: 194 100% 52%;
+    --sidebar-primary-foreground: 222 78% 4%;
+    --sidebar-accent: 220 36% 14%;
     --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 220 33% 24%;
-    --sidebar-ring: 189 100% 52%;
+    --sidebar-border: 218 30% 18%;
+    --sidebar-ring: 194 100% 52%;
   }
 
   .dark {
-    --background: 223 72% 8%;
+    --background: 222 80% 3%;
     --foreground: 210 40% 98%;
-    --surface: 218 38% 16%;
+    --surface: 221 44% 10%;
     --surface-foreground: 210 55% 96%;
-    --card: 223 54% 12%;
+    --card: 220 52% 8%;
     --card-foreground: 210 45% 98%;
-    --popover: 223 54% 12%;
+    --popover: 220 52% 8%;
     --popover-foreground: 210 45% 98%;
-    --primary: 189 100% 52%;
-    --primary-foreground: 223 69% 10%;
-    --highlight: 189 100% 52%;
-    --highlight-foreground: 223 69% 10%;
-    --secondary: 220 45% 19%;
+    --primary: 194 100% 52%;
+    --primary-foreground: 222 80% 3%;
+    --highlight: 198 100% 58%;
+    --highlight-foreground: 222 80% 3%;
+    --secondary: 221 34% 17%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 221 38% 16%;
-    --muted-foreground: 214 28% 74%;
-    --accent: 220 45% 19%;
+    --muted: 220 30% 13%;
+    --muted-foreground: 213 20% 70%;
+    --accent: 220 28% 20%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 75% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 33% 28%;
-    --input: 220 33% 22%;
-    --ring: 189 100% 52%;
+    --border: 217 30% 23%;
+    --input: 218 27% 17%;
+    --ring: 194 100% 52%;
   }
 }
 
